@@ -1,5 +1,5 @@
 {
-  "name": "data-model",
+  "name": "typescript-data-model",
   "version": "0.1.0",
   "description": "A typescript library that is designed to use data model.",
   "keywords": [

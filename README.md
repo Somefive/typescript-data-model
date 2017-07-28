@@ -4,7 +4,7 @@
 This library is used for created data model using Class Object based on Typescript. The data model uses decorators to decorate properties. Currently, there are two kinds of decorators: **Scenario** and **Validator**.
 
 ## Installing with npm
-Run `npm install --save-dev data-model`.
+Run `npm install --save-dev typescript-data-model`.
 
 Then use `import {Model, scenario, validate} from 'data-model'`
 
