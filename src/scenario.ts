@@ -1,29 +1,43 @@
 import 'reflect-metadata'
 
-export const ScenarioMetadataKey = Symbol("mongo-model:scenario")
+export const ScenarioMetadataKey = Symbol("data-model:scenario")
 
+/**
+ * ScenarioFilter is used with scenario to apply scenario on Class Object Properties.
+ * In data model usage, while trying to validate a data model or publish a data model to docs, the scenario filter on
+ * a property can help decide whether this property should be checked in validation or contained in a published doc.
+ */
 export class ScenarioFilter {
-    defaultInclude: boolean
+    /**
+     * if current scenario is neither included nor excluded, this will decide the policy.
+     */
+    defaultIncluded: boolean
+    /**
+     * scenarios that this property should be included
+     */
     include: string[]
+    /**
+     * scenarios that this property should be excluded
+     */
     exclude: string[]
-    constructor(defaultInclude = true, include: string[] = [], exclude: string[] = []) {
+    constructor(defaultIncluded = true, include: string[] = [], exclude: string[] = []) {
         this.include = include
         this.exclude = exclude
-        this.defaultInclude = defaultInclude
+        this.defaultIncluded = defaultIncluded
     }
     check(scenario: string): boolean {
         if (this.include.indexOf(scenario) >= 0) 
             return true
         if (this.exclude.indexOf(scenario) >= 0) 
             return false
-        return this.defaultInclude
+        return this.defaultIncluded
     }
     static NEVER = new ScenarioFilter(false)
     static ALWAYS = new ScenarioFilter(true)
 }
 
-export function scenario(ScenarioFilter: ScenarioFilter) {
-    return Reflect.metadata(ScenarioMetadataKey, ScenarioFilter)
+export function scenario(scenarioFilter: ScenarioFilter) {
+    return Reflect.metadata(ScenarioMetadataKey, scenarioFilter)
 }
 
 export function Never() {

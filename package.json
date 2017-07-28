@@ -2,12 +2,15 @@
   "name": "data-model",
   "version": "0.1.0",
   "description": "A typescript library that is designed to use data model.",
+  "keywords": [
+    "typescript", "data", "model", "data-model", "validate", "validation", "scenario"
+  ],
   "main": "./dist/index.js",
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "clean": "rm -rf dist/"
+    "clean": "rm -rf dist/",
+    "sample": "rm -rf sample/dist/ && tsc -p sample/ && node sample/dist/sample/index.js"
   },
-  "author": "Somefive",
   "license": "MIT",
   "dependencies": {
     "@types/lodash": "^4.14.71",
@@ -17,5 +20,12 @@
     "mongodb": "^2.2.30",
     "reflect-metadata": "^0.1.10"
   },
-  "typings": "./dist/index.d.ts"
+  "homepage": "https://github.com/Somefive/typescript-data-model",
+  "git": "https://github.com/Somefive/typescript-data-model",
+  "typings": "./dist/index.d.ts",
+  "author": "Somefive <Somefive@foxmail.com> (https://www.somefive.com/)",
+  "bugs":{ 
+    "url" : "https://github.com/Somefive/typescript-data-model/issues",
+    "email" : "Somefive@foxmail.com"
+  }
 }

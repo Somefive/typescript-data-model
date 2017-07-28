@@ -1,5 +1,8 @@
 import 'reflect-metadata';
 import { IValidator, ValidationError } from './validator';
+/**
+ *
+ */
 export declare class Model {
     scenario: string;
     scenarioDefaultInclude: boolean;

@@ -6,11 +6,13 @@ import {ValidateMetadataKey, IValidator, ValidationError} from './validator'
 
 export class Model {
 
-    @Never()
-    scenario: string = 'default'
+    static DefaultScenario = 'default'
 
     @Never()
-    scenarioDefaultInclude: boolean = true
+    scenario: string = Model.DefaultScenario
+
+    @Never()
+    scenarioDefaultIncluded: boolean = true
     
     constructor() {
     }
@@ -19,7 +21,7 @@ export class Model {
         if (!Reflect.has(this, field))
             return false
         const scenarioFilter = Reflect.getMetadata(ScenarioMetadataKey, this, field) as ScenarioFilter
-        return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultInclude
+        return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultIncluded
     }
 
     load(obj: Object, fields?: string[]) {
@@ -54,12 +56,14 @@ export class Model {
         if (!fields)
             fields = Object.getOwnPropertyNames(this)
         fields.forEach(field => {
-            const value = Reflect.get(this, field)
-            const validator = defaultValidator || Reflect.getMetadata(ValidateMetadataKey, this, field) as IValidator
-            if (validator) {
-                const error = validator.validate(value)
-                if (error)
-                    errors[field] = error
+            if (this.isFieldAvailable(field)) {
+                const value = Reflect.get(this, field)
+                const validator = defaultValidator || Reflect.getMetadata(ValidateMetadataKey, this, field) as IValidator
+                if (validator) {
+                    const error = validator.validate(value)
+                    if (error)
+                        errors[field] = error
+                }
             }
         })
         return errors

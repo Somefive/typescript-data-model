@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { Model } from './model'
 import * as _ from 'lodash'
-export const ValidateMetadataKey = Symbol("mongo-model:validator")
+export const ValidateMetadataKey = Symbol("data-model:validator")
 export function validate(...validators: IValidator[]) {
     if (validators.length > 1)
         return Reflect.metadata(ValidateMetadataKey, new ChainValidator(...validators))
@@ -63,7 +63,8 @@ export class NestedValidator implements IValidator {
         this.fields = fields
     }
     validate(obj: Object): ValidationError {
-        return (obj instanceof Model) ? obj.validate(this.fields) : null
+        const validateResult = (obj instanceof Model) ? obj.validate(this.fields) : null
+        return (_.isEmpty(validateResult)) ? null : validateResult
     }
 }
 export class ChainValidator implements IValidator {

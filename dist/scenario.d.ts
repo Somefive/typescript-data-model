@@ -1,5 +1,8 @@
 import 'reflect-metadata';
 export declare const ScenarioMetadataKey: symbol;
+/**
+ *
+ */
 export declare class ScenarioFilter {
     defaultInclude: boolean;
     include: string[];
