@@ -1,0 +1,21 @@
+{
+  "name": "data-model",
+  "version": "0.1.0",
+  "description": "A typescript library that is designed to use data model.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "rm -rf dist/ && tsc",
+    "clean": "rm -rf dist/"
+  },
+  "author": "Somefive",
+  "license": "MIT",
+  "dependencies": {
+    "@types/lodash": "^4.14.71",
+    "@types/mongodb": "^2.2.7",
+    "@types/reflect-metadata": "0.0.5",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.30",
+    "reflect-metadata": "^0.1.10"
+  },
+  "typings": "./dist/index.d.ts"
+}
