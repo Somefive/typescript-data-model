@@ -1,3 +1,3 @@
-export { Model, ModelA } from './model';
+export * from './model';
 export * from './scenario';
 export * from './validator';

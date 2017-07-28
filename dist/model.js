@@ -13,19 +13,16 @@ var _ = require("lodash");
 require("reflect-metadata");
 var scenario_1 = require("./scenario");
 var validator_1 = require("./validator");
-/**
- *
- */
 var Model = (function () {
     function Model() {
-        this.scenario = 'default';
-        this.scenarioDefaultInclude = true;
+        this.scenario = Model.DefaultScenario;
+        this.scenarioDefaultIncluded = true;
     }
     Model.prototype.isFieldAvailable = function (field) {
         if (!Reflect.has(this, field))
             return false;
         var scenarioFilter = Reflect.getMetadata(scenario_1.ScenarioMetadataKey, this, field);
-        return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultInclude;
+        return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultIncluded;
     };
     Model.prototype.load = function (obj, fields) {
         var _this = this;
@@ -60,16 +57,19 @@ var Model = (function () {
         if (!fields)
             fields = Object.getOwnPropertyNames(this);
         fields.forEach(function (field) {
-            var value = Reflect.get(_this, field);
-            var validator = defaultValidator || Reflect.getMetadata(validator_1.ValidateMetadataKey, _this, field);
-            if (validator) {
-                var error = validator.validate(value);
-                if (error)
-                    errors[field] = error;
+            if (_this.isFieldAvailable(field)) {
+                var value = Reflect.get(_this, field);
+                var validator = defaultValidator || Reflect.getMetadata(validator_1.ValidateMetadataKey, _this, field);
+                if (validator) {
+                    var error = validator.validate(value);
+                    if (error)
+                        errors[field] = error;
+                }
             }
         });
         return errors;
     };
+    Model.DefaultScenario = 'default';
     __decorate([
         scenario_1.Never(),
         __metadata("design:type", String)
@@ -77,7 +77,7 @@ var Model = (function () {
     __decorate([
         scenario_1.Never(),
         __metadata("design:type", Boolean)
-    ], Model.prototype, "scenarioDefaultInclude", void 0);
+    ], Model.prototype, "scenarioDefaultIncluded", void 0);
     return Model;
 }());
 exports.Model = Model;

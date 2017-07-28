@@ -76,7 +76,8 @@ var NestedValidator = (function () {
         this.fields = fields;
     }
     NestedValidator.prototype.validate = function (obj) {
-        return (obj instanceof model_1.Model) ? obj.validate(this.fields) : null;
+        var validateResult = (obj instanceof model_1.Model) ? obj.validate(this.fields) : null;
+        return (_.isEmpty(validateResult)) ? null : validateResult;
     };
     return NestedValidator;
 }());
