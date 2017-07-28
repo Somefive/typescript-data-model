@@ -8,6 +8,13 @@ Run `npm install --save-dev data-model`.
 
 Then use `import {Model, scenario, validate} from 'data-model'`
 
+Notices: since this library use decorators and metadata which are experimental, `experimentalDecorators` and `emitDecoratorMetadata` should be enabled in `tsconfig.json` which means you should add
+```json
+"experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
+"emitDecoratorMetadata": true         /* Enables experimental support for emitting type metadata for decorators. */
+```
+to your `tsconfig.json` file.
+
 ## Sample
 Sample can be found in [sample/index.ts](./sample/index.ts). You can also run `npm run sample` to compile it into sample/dist and run it.
 
