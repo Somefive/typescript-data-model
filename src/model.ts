@@ -43,7 +43,6 @@ export class Model {
         const docs: any = {}
         fields.forEach(field => {
             const value = Reflect.get(this, field)
-            console.log("field ", field, " instanceOf Model: ", value instanceof Model)
             if (!_.isNil(value) && this.isFieldAvailable(field))
                 Reflect.set(docs, field, (value instanceof Model) ? value.toDocs() : value)
         })
