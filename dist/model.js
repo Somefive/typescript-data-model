@@ -18,6 +18,20 @@ var Model = (function () {
         this.scenario = Model.DefaultScenario;
         this.scenarioDefaultIncluded = true;
     }
+    Object.defineProperty(Model, "className", {
+        get: function () {
+            return this.toString().split('(' || /s+/)[0].split(' ' || /s+/)[1];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Model, "kebabClassName", {
+        get: function () {
+            return _.kebabCase(this.className);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Model.prototype.isFieldAvailable = function (field) {
         if (!Reflect.has(this, field))
             return false;

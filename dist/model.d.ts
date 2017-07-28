@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import { IValidator, ValidationError } from './validator';
 export declare class Model {
+    static readonly className: string;
+    static readonly kebabClassName: string;
     static DefaultScenario: string;
     scenario: string;
     scenarioDefaultIncluded: boolean;

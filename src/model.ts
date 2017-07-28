@@ -1,4 +1,3 @@
-import { Db, Collection, CollectionInsertOneOptions, ReplaceOneOptions, ObjectID } from 'mongodb'
 import * as _ from 'lodash'
 import 'reflect-metadata'
 import {scenario, ScenarioFilter, ScenarioMetadataKey, Never, Always} from './scenario'
