@@ -6,6 +6,14 @@ import {ValidateMetadataKey, IValidator, ValidationError} from './validator'
 
 export class Model {
 
+    static get className(): string {
+        return this.toString().split ('(' || /s+/)[0].split (' ' || /s+/)[1];
+    }
+
+    static get kebabClassName(): string {
+        return _.kebabCase(this.className)
+    }
+
     static DefaultScenario = 'default'
 
     @Never()
