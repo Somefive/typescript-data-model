@@ -9,7 +9,7 @@ Run `npm install --save-dev data-model`.
 Then use `import {Model, scenario, validate} from 'data-model'`
 
 ## Sample
-Sample can be found in sample/index.ts. You can also run `npm run sample` to compile it into sample/dist and run it.
+Sample can be found in [sample/index.ts](./sample/index.ts). You can also run `npm run sample` to compile it into sample/dist and run it.
 
 ## Introduction
 
