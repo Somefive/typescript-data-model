@@ -30,15 +30,17 @@ The property **scenario** indicates the current scenario of this model and the p
 **load** can be used to load properties if the property is available and exists in the given object. 
 
 **toDocs** can publish current data model to object that contains specified available fields. If no fields specified then all
-available fields are going to be published.
+available fields are going to be published. The option `ignoreNil` will ignore the fields that has null or undefined value. It is set to be true by default. The option `force` will skip the availability check and this is set to false by default.
 
-**validate** can validate specified available fields if validators are suppressed on them. If no fields specified then all available fields are going to be published.
+**validate** can validate specified available fields if validators are suppressed on them. If no fields specified then all available fields are going to be published. The option `force` will skip the availability check and this is set to false by default.
 
 *Watch out:* Each field should be initialized in constructor otherwise when it is not defined explicitly, the validation and scenario will not work on it.
 
 ### Scenario
 The **ScenarioFilter** is composed of list of included and excluded scenarios. The **defaultIncluded** is set to decide whether 
 the suppressed property is available if current scenario is neither in included list nor in excluded list.
+
+The **ScenarioName** includes *string* and *Symbol* types which are the valid parameter types when creating scenarios.
 
 For example, Model default scenario are set to be *default*, if *default* is in a property's excluded scenario list then it will be unavailable.
 

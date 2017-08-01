@@ -4,7 +4,7 @@ export declare function validate(...validators: IValidator[]): {
     (target: Function): void;
     (target: Object, propertyKey: string | symbol): void;
 };
-export declare type ValidationError = string | null | {
+export declare type ValidationError = string | undefined | {
     [attr: string]: ValidationError;
 };
 export interface IValidator {

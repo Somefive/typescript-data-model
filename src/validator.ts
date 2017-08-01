@@ -8,7 +8,7 @@ export function validate(...validators: IValidator[]) {
     else
         return Reflect.metadata(ValidateMetadataKey, validators[0])
 }
-export type ValidationError = string|null|{[attr:string]:ValidationError}
+export type ValidationError = string|undefined|{[attr:string]:ValidationError}
 export interface IValidator {
     validate(obj: Object): ValidationError
 }
@@ -21,9 +21,9 @@ export class RegexValidator implements IValidator {
     }
     validate(obj: Object): ValidationError {
         if (typeof(obj) === "string")
-            return (this.regex.test(obj as string)) ? null : this.errorMessage
+            return (this.regex.test(obj as string)) ? undefined : this.errorMessage
         else
-            return null
+            return undefined
     }
 }
 export class RangeValidator implements IValidator {
@@ -36,9 +36,9 @@ export class RangeValidator implements IValidator {
         this.errorMessage = errorMessage
     }
     validate(obj: Object): ValidationError {
-        if (typeof(obj) !== "number") return null
+        if (typeof(obj) !== "number") return undefined
         const _ = obj as number
-        return (_ >= this.min && _ <= this.max) ? null : this.errorMessage
+        return (_ >= this.min && _ <= this.max) ? undefined : this.errorMessage
     }
 }
 export class ArrayValidator implements IValidator {
@@ -54,7 +54,7 @@ export class ArrayValidator implements IValidator {
                 if (error) errors[index] = error
             })
         }
-        return (Object.keys(errors).length == 0) ? null : errors
+        return (Object.keys(errors).length == 0) ? undefined : errors
     }
 }
 export class NestedValidator implements IValidator {
@@ -63,8 +63,8 @@ export class NestedValidator implements IValidator {
         this.fields = fields
     }
     validate(obj: Object): ValidationError {
-        const validateResult = (obj instanceof Model) ? obj.validate(this.fields) : null
-        return (_.isEmpty(validateResult)) ? null : validateResult
+        const validateResult = (obj instanceof Model) ? obj.validate(this.fields) : undefined
+        return (_.isEmpty(validateResult)) ? undefined : validateResult
     }
 }
 export class ChainValidator implements IValidator {
@@ -78,7 +78,7 @@ export class ChainValidator implements IValidator {
             if (error) 
                 return error
         }
-        return null
+        return undefined
     }
 }
 export class PredicateValidator implements IValidator {
@@ -91,7 +91,7 @@ export class PredicateValidator implements IValidator {
     validate(obj: Object): ValidationError {
         const result = this.predicate(obj)
         if (typeof(result) === "boolean")
-            return result ? null : this.errorMessage
+            return result ? undefined : this.errorMessage
         else
             return result
     }
@@ -102,6 +102,6 @@ export class NotEmptyValidator implements IValidator {
         this.errorMessage = errorMessage
     }
     validate(obj: Object): ValidationError {
-        return _.isEmpty(obj) ? this.errorMessage : null
+        return _.isEmpty(obj) ? this.errorMessage : undefined
     }
 }

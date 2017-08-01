@@ -32,9 +32,12 @@ var Model = (function () {
         enumerable: true,
         configurable: true
     });
-    Model.prototype.isFieldAvailable = function (field) {
+    Model.prototype.isFieldAvailable = function (field, checkScenario) {
+        if (checkScenario === void 0) { checkScenario = true; }
         if (!Reflect.has(this, field))
             return false;
+        if (!checkScenario)
+            return true;
         var scenarioFilter = Reflect.getMetadata(scenario_1.ScenarioMetadataKey, this, field);
         return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultIncluded;
     };
@@ -53,25 +56,28 @@ var Model = (function () {
             }
         });
     };
-    Model.prototype.toDocs = function (fields) {
+    Model.prototype.toDocs = function (fields, force, ignoreNil) {
         var _this = this;
+        if (force === void 0) { force = false; }
+        if (ignoreNil === void 0) { ignoreNil = true; }
         if (!fields)
             fields = Object.getOwnPropertyNames(this);
         var docs = {};
         fields.forEach(function (field) {
             var value = Reflect.get(_this, field);
-            if (!_.isNil(value) && _this.isFieldAvailable(field))
+            if ((!_.isNil(value) || !ignoreNil) && _this.isFieldAvailable(field, !force))
                 Reflect.set(docs, field, (value instanceof Model) ? value.toDocs() : value);
         });
         return docs;
     };
-    Model.prototype.validate = function (fields, defaultValidator) {
+    Model.prototype.validate = function (fields, defaultValidator, force) {
         var _this = this;
+        if (force === void 0) { force = false; }
         var errors = {};
         if (!fields)
             fields = Object.getOwnPropertyNames(this);
         fields.forEach(function (field) {
-            if (_this.isFieldAvailable(field)) {
+            if (_this.isFieldAvailable(field, !force)) {
                 var value = Reflect.get(_this, field);
                 var validator = defaultValidator || Reflect.getMetadata(validator_1.ValidateMetadataKey, _this, field);
                 if (validator) {
@@ -83,10 +89,10 @@ var Model = (function () {
         });
         return errors;
     };
-    Model.DefaultScenario = 'default';
+    Model.DefaultScenario = Symbol('default');
     __decorate([
         scenario_1.Never(),
-        __metadata("design:type", String)
+        __metadata("design:type", Object)
     ], Model.prototype, "scenario", void 0);
     __decorate([
         scenario_1.Never(),

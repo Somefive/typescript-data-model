@@ -37,7 +37,7 @@ var MyValidator = (function () {
         this.errorMessage = errorMessage;
     }
     MyValidator.prototype.validate = function (obj) {
-        return (obj.length > 15) ? this.errorMessage : null;
+        return (obj.length > 15) ? this.errorMessage : undefined;
     };
     return MyValidator;
 }());

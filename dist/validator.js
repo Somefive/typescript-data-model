@@ -23,9 +23,9 @@ var RegexValidator = (function () {
     }
     RegexValidator.prototype.validate = function (obj) {
         if (typeof (obj) === "string")
-            return (this.regex.test(obj)) ? null : this.errorMessage;
+            return (this.regex.test(obj)) ? undefined : this.errorMessage;
         else
-            return null;
+            return undefined;
     };
     return RegexValidator;
 }());
@@ -41,9 +41,9 @@ var RangeValidator = (function () {
     }
     RangeValidator.prototype.validate = function (obj) {
         if (typeof (obj) !== "number")
-            return null;
+            return undefined;
         var _ = obj;
-        return (_ >= this.min && _ <= this.max) ? null : this.errorMessage;
+        return (_ >= this.min && _ <= this.max) ? undefined : this.errorMessage;
     };
     return RangeValidator;
 }());
@@ -62,7 +62,7 @@ var ArrayValidator = (function () {
                     errors[index] = error;
             });
         }
-        return (Object.keys(errors).length == 0) ? null : errors;
+        return (Object.keys(errors).length == 0) ? undefined : errors;
     };
     return ArrayValidator;
 }());
@@ -76,8 +76,8 @@ var NestedValidator = (function () {
         this.fields = fields;
     }
     NestedValidator.prototype.validate = function (obj) {
-        var validateResult = (obj instanceof model_1.Model) ? obj.validate(this.fields) : null;
-        return (_.isEmpty(validateResult)) ? null : validateResult;
+        var validateResult = (obj instanceof model_1.Model) ? obj.validate(this.fields) : undefined;
+        return (_.isEmpty(validateResult)) ? undefined : validateResult;
     };
     return NestedValidator;
 }());
@@ -97,7 +97,7 @@ var ChainValidator = (function () {
             if (error)
                 return error;
         }
-        return null;
+        return undefined;
     };
     return ChainValidator;
 }());
@@ -111,7 +111,7 @@ var PredicateValidator = (function () {
     PredicateValidator.prototype.validate = function (obj) {
         var result = this.predicate(obj);
         if (typeof (result) === "boolean")
-            return result ? null : this.errorMessage;
+            return result ? undefined : this.errorMessage;
         else
             return result;
     };
@@ -124,7 +124,7 @@ var NotEmptyValidator = (function () {
         this.errorMessage = errorMessage;
     }
     NotEmptyValidator.prototype.validate = function (obj) {
-        return _.isEmpty(obj) ? this.errorMessage : null;
+        return _.isEmpty(obj) ? this.errorMessage : undefined;
     };
     return NotEmptyValidator;
 }());

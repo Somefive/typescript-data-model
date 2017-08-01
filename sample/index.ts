@@ -10,7 +10,7 @@ class MyValidator implements IValidator {
         this.errorMessage = errorMessage
     }
     validate(obj: Object): ValidationError {
-        return ((obj as string).length > 15) ? this.errorMessage : null
+        return ((obj as string).length > 15) ? this.errorMessage : undefined
     }
 }
 

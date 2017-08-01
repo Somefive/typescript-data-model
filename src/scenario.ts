@@ -2,6 +2,8 @@ import 'reflect-metadata'
 
 export const ScenarioMetadataKey = Symbol("data-model:scenario")
 
+export type ScenarioName = string | symbol
+
 /**
  * ScenarioFilter is used with scenario to apply scenario on Class Object Properties.
  * In data model usage, while trying to validate a data model or publish a data model to docs, the scenario filter on
@@ -15,17 +17,17 @@ export class ScenarioFilter {
     /**
      * scenarios that this property should be included
      */
-    include: string[]
+    include: ScenarioName[]
     /**
      * scenarios that this property should be excluded
      */
-    exclude: string[]
+    exclude: ScenarioName[]
     constructor(defaultIncluded = true, include: string[] = [], exclude: string[] = []) {
         this.include = include
         this.exclude = exclude
         this.defaultIncluded = defaultIncluded
     }
-    check(scenario: string): boolean {
+    check(scenario: ScenarioName): boolean {
         if (this.include.indexOf(scenario) >= 0) 
             return true
         if (this.exclude.indexOf(scenario) >= 0) 
