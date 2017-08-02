@@ -21,6 +21,7 @@ export declare class Model {
     constructor();
     isFieldAvailable(field: string, checkScenario?: boolean): boolean;
     load(obj: Object, fields?: ExtendFieldFilter): void;
+    protected toDocValue(value: any, field: string, fieldFilters: FieldFilter, force?: boolean, ignoreNil?: boolean): any;
     toDocs(fields?: ExtendFieldFilter, force?: boolean, ignoreNil?: boolean): Object;
     validate(fields?: ExtendFieldFilter, defaultValidator?: IValidator, force?: boolean): ValidationError;
 }

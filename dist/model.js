@@ -84,6 +84,19 @@ var Model = (function () {
             }
         });
     };
+    Model.prototype.toDocValue = function (value, field, fieldFilters, force, ignoreNil) {
+        var _this = this;
+        if (force === void 0) { force = false; }
+        if (ignoreNil === void 0) { ignoreNil = true; }
+        if (value instanceof Model)
+            return value.toDocs(field_1.getSubFieldFilter(fieldFilters, field), force, ignoreNil);
+        else if (value instanceof Array) {
+            return value.map(function (item) { return _this.toDocValue(item, field, fieldFilters, force, ignoreNil); });
+        }
+        else {
+            return value;
+        }
+    };
     Model.prototype.toDocs = function (fields, force, ignoreNil) {
         var _this = this;
         if (force === void 0) { force = false; }
@@ -93,7 +106,7 @@ var Model = (function () {
         Object.keys(this).forEach(function (field) {
             var value = Reflect.get(_this, field);
             if ((!_.isNil(value) || !ignoreNil) && _this.isFieldAvailable(field, !force) && fieldFilters[field])
-                Reflect.set(docs, field, (value instanceof Model) ? value.toDocs(field_1.getSubFieldFilter(fieldFilters, field), force, ignoreNil) : value);
+                Reflect.set(docs, field, _this.toDocValue(value, field, fieldFilters, force, ignoreNil));
         });
         return docs;
     };

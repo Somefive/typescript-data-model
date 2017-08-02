@@ -74,15 +74,23 @@ export class Model {
         })
     }
 
+    protected toDocValue(value: any, field: string, fieldFilters: FieldFilter, force=false, ignoreNil=true): any {
+        if (value instanceof Model) 
+            return value.toDocs(getSubFieldFilter(fieldFilters, field), force, ignoreNil)
+        else if (value instanceof Array) {
+            return value.map(item => this.toDocValue(item, field, fieldFilters, force, ignoreNil))
+        } else {
+            return value
+        }
+    }
+
     toDocs(fields?: ExtendFieldFilter, force=false, ignoreNil=true): Object {
         const fieldFilters = this.fieldFilters(fields)
         const docs: any = {}
         Object.keys(this).forEach(field => {
             const value = Reflect.get(this, field)
             if ((!_.isNil(value) || !ignoreNil) && this.isFieldAvailable(field, !force) && fieldFilters[field])
-                Reflect.set(docs, field,
-                    (value instanceof Model) ? value.toDocs(getSubFieldFilter(fieldFilters, field), force, ignoreNil) : value
-                )
+                Reflect.set(docs, field, this.toDocValue(value, field, fieldFilters, force, ignoreNil))
         })
         return docs
     }
