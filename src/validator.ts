@@ -52,7 +52,9 @@ export class ArrayValidator implements IValidator {
     }
 }
 export class NestedValidator implements IValidator {
-    constructor(public fields: ExtendFieldFilter) {
+    fields: ExtendFieldFilter | undefined
+    constructor(fields?: ExtendFieldFilter) {
+        this.fields = fields
     }
     validate(obj: Object): ValidationError {
         const validateResult = (obj instanceof Model) ? obj.validate(this.fields) : undefined

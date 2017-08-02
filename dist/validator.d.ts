@@ -31,8 +31,8 @@ export declare class ArrayValidator implements IValidator {
     validate(obj: Object): ValidationError;
 }
 export declare class NestedValidator implements IValidator {
-    fields: ExtendFieldFilter;
-    constructor(fields: ExtendFieldFilter);
+    fields: ExtendFieldFilter | undefined;
+    constructor(fields?: ExtendFieldFilter);
     validate(obj: Object): ValidationError;
 }
 export declare class ChainValidator implements IValidator {
