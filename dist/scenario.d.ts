@@ -19,7 +19,7 @@ export declare class ScenarioFilter {
      * scenarios that this property should be excluded
      */
     exclude: ScenarioName[];
-    constructor(defaultIncluded?: boolean, include?: string[], exclude?: string[]);
+    constructor(defaultIncluded?: boolean, include?: ScenarioName[], exclude?: ScenarioName[]);
     check(scenario: ScenarioName): boolean;
     static NEVER: ScenarioFilter;
     static ALWAYS: ScenarioFilter;

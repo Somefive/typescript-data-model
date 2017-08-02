@@ -22,7 +22,7 @@ export class ScenarioFilter {
      * scenarios that this property should be excluded
      */
     exclude: ScenarioName[]
-    constructor(defaultIncluded = true, include: string[] = [], exclude: string[] = []) {
+    constructor(defaultIncluded = true, include: ScenarioName[] = [], exclude: ScenarioName[] = []) {
         this.include = include
         this.exclude = exclude
         this.defaultIncluded = defaultIncluded
