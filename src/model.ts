@@ -39,8 +39,9 @@ export class Model {
         return generateFieldFilter(fields)
     }
 
-    @Never()
-    fieldNamesLangPack: {[field: string]: I18NString} = {}
+    get fieldNamesLangPack(): {[field: string]: I18NString} {
+        return {}
+    }
 
     @Never()
     scenario: ScenarioName = Model.DefaultScenario

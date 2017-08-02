@@ -17,7 +17,6 @@ var i18n_1 = require("./i18n");
 var field_1 = require("./field");
 var Model = (function () {
     function Model() {
-        this.fieldNamesLangPack = {};
         this.scenario = Model.DefaultScenario;
         this.scenarioDefaultIncluded = true;
     }
@@ -55,6 +54,13 @@ var Model = (function () {
             fields = this.fields();
         return field_1.generateFieldFilter(fields);
     };
+    Object.defineProperty(Model.prototype, "fieldNamesLangPack", {
+        get: function () {
+            return {};
+        },
+        enumerable: true,
+        configurable: true
+    });
     Model.prototype.isFieldAvailable = function (field, checkScenario) {
         if (checkScenario === void 0) { checkScenario = true; }
         if (!Reflect.has(this, field))
@@ -110,10 +116,6 @@ var Model = (function () {
         return errors;
     };
     Model.DefaultScenario = Symbol('default');
-    __decorate([
-        scenario_1.Never(),
-        __metadata("design:type", Object)
-    ], Model.prototype, "fieldNamesLangPack", void 0);
     __decorate([
         scenario_1.Never(),
         __metadata("design:type", Object)

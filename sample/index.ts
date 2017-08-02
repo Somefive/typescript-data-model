@@ -50,10 +50,12 @@ class User extends Model {
 
     static UserScenario: string = "user"
 
-    fieldNamesLangPack = {
-        password: {
-            en: "user password",
-            zh: "密码"
+    get fieldNamesLangPack() { 
+        return {
+            password: {
+                en: "user password",
+                zh: "密码"
+            }
         }
     }
 

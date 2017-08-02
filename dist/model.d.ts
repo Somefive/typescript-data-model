@@ -13,7 +13,7 @@ export declare class Model {
         [attr: string]: string;
     };
     fieldFilters(fields?: ExtendFieldFilter): FieldFilter;
-    fieldNamesLangPack: {
+    readonly fieldNamesLangPack: {
         [field: string]: I18NString;
     };
     scenario: ScenarioName;

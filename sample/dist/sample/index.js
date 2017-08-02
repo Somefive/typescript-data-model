@@ -82,18 +82,24 @@ var User = (function (_super) {
         if (age === void 0) { age = 18; }
         if (contact === void 0) { contact = []; }
         var _this = _super.call(this) || this;
-        _this.fieldNamesLangPack = {
-            password: {
-                en: "user password",
-                zh: "密码"
-            }
-        };
         _this.name = name || new Name();
         _this.age = age;
         _this.contact = contact;
         _this.password = "";
         return _this;
     }
+    Object.defineProperty(User.prototype, "fieldNamesLangPack", {
+        get: function () {
+            return {
+                password: {
+                    en: "user password",
+                    zh: "密码"
+                }
+            };
+        },
+        enumerable: true,
+        configurable: true
+    });
     User.UserScenario = "user";
     __decorate([
         validator_1.validate(new validator_1.NestedValidator(["firstName", "lastName"])),
