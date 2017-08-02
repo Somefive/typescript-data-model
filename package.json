@@ -14,8 +14,9 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "clean": "rm -rf dist/",
-    "sample": "rm -rf sample/dist/ && tsc -p sample/ && node sample/dist/sample/index.js"
+    "clean": "rm -rf dist/ && rm -rf sample/dist",
+    "sample": "rm -rf sample/dist/ && tsc -p sample/ && node sample/dist/sample/index.js",
+    "rebuild": "npm run clean && npm run build"
   },
   "license": "MIT",
   "dependencies": {
