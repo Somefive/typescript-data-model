@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
-var model_1 = require("./model");
 var _ = require("lodash");
+var model_1 = require("./model");
 exports.ValidateMetadataKey = Symbol("data-model:validator");
 function validate() {
     var validators = [];
@@ -68,11 +68,7 @@ var ArrayValidator = (function () {
 }());
 exports.ArrayValidator = ArrayValidator;
 var NestedValidator = (function () {
-    function NestedValidator() {
-        var fields = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            fields[_i] = arguments[_i];
-        }
+    function NestedValidator(fields) {
         this.fields = fields;
     }
     NestedValidator.prototype.validate = function (obj) {

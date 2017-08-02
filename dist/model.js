@@ -13,8 +13,11 @@ var _ = require("lodash");
 require("reflect-metadata");
 var scenario_1 = require("./scenario");
 var validator_1 = require("./validator");
+var i18n_1 = require("./i18n");
+var field_1 = require("./field");
 var Model = (function () {
     function Model() {
+        this.fieldNamesLangPack = {};
         this.scenario = Model.DefaultScenario;
         this.scenarioDefaultIncluded = true;
     }
@@ -32,6 +35,26 @@ var Model = (function () {
         enumerable: true,
         configurable: true
     });
+    Model.prototype.fields = function (fields) {
+        return fields || Object.getOwnPropertyNames(this);
+    };
+    Model.prototype.fieldName = function (field, lang) {
+        return i18n_1.I18N.getString(this.fieldNamesLangPack[field] || field, lang) || field;
+    };
+    Model.prototype.fieldNames = function (fields, lang) {
+        var _this = this;
+        var fieldNames = {};
+        this.fields(fields).forEach(function (field) {
+            if (_this.isFieldAvailable(field))
+                fieldNames[field] = _this.fieldName(field, lang);
+        });
+        return fieldNames;
+    };
+    Model.prototype.fieldFilters = function (fields) {
+        if (!fields)
+            fields = this.fields();
+        return field_1.generateFieldFilter(fields);
+    };
     Model.prototype.isFieldAvailable = function (field, checkScenario) {
         if (checkScenario === void 0) { checkScenario = true; }
         if (!Reflect.has(this, field))
@@ -43,14 +66,13 @@ var Model = (function () {
     };
     Model.prototype.load = function (obj, fields) {
         var _this = this;
-        if (!fields)
-            fields = Object.getOwnPropertyNames(obj);
-        fields.forEach(function (field) {
+        var fieldFilters = this.fieldFilters(fields);
+        Object.keys(obj).forEach(function (field) {
             var value = Reflect.get(obj, field);
-            if (!_.isNil(value) && _this.isFieldAvailable(field)) {
+            if (fieldFilters[field] && _this.isFieldAvailable(field) && !_.isNil(value)) {
                 var oldValue = Reflect.get(_this, field);
                 if (oldValue instanceof Model)
-                    oldValue.load(value);
+                    oldValue.load(value, field_1.getSubFieldFilter(fieldFilters, field));
                 else
                     Reflect.set(_this, field, value);
             }
@@ -60,24 +82,22 @@ var Model = (function () {
         var _this = this;
         if (force === void 0) { force = false; }
         if (ignoreNil === void 0) { ignoreNil = true; }
-        if (!fields)
-            fields = Object.getOwnPropertyNames(this);
+        var fieldFilters = this.fieldFilters(fields);
         var docs = {};
-        fields.forEach(function (field) {
+        Object.keys(this).forEach(function (field) {
             var value = Reflect.get(_this, field);
-            if ((!_.isNil(value) || !ignoreNil) && _this.isFieldAvailable(field, !force))
-                Reflect.set(docs, field, (value instanceof Model) ? value.toDocs() : value);
+            if ((!_.isNil(value) || !ignoreNil) && _this.isFieldAvailable(field, !force) && fieldFilters[field])
+                Reflect.set(docs, field, (value instanceof Model) ? value.toDocs(field_1.getSubFieldFilter(fieldFilters, field), force, ignoreNil) : value);
         });
         return docs;
     };
     Model.prototype.validate = function (fields, defaultValidator, force) {
         var _this = this;
         if (force === void 0) { force = false; }
+        var fieldFilters = this.fieldFilters(fields);
         var errors = {};
-        if (!fields)
-            fields = Object.getOwnPropertyNames(this);
-        fields.forEach(function (field) {
-            if (_this.isFieldAvailable(field, !force)) {
+        Object.keys(this).forEach(function (field) {
+            if (fieldFilters[field] && _this.isFieldAvailable(field, !force)) {
                 var value = Reflect.get(_this, field);
                 var validator = defaultValidator || Reflect.getMetadata(validator_1.ValidateMetadataKey, _this, field);
                 if (validator) {
@@ -90,6 +110,10 @@ var Model = (function () {
         return errors;
     };
     Model.DefaultScenario = Symbol('default');
+    __decorate([
+        scenario_1.Never(),
+        __metadata("design:type", Object)
+    ], Model.prototype, "fieldNamesLangPack", void 0);
     __decorate([
         scenario_1.Never(),
         __metadata("design:type", Object)

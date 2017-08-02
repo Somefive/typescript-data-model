@@ -1,10 +1,12 @@
 import 'reflect-metadata';
+import { I18NString } from './i18n';
+import { ExtendFieldFilter } from './field';
 export declare const ValidateMetadataKey: symbol;
 export declare function validate(...validators: IValidator[]): {
     (target: Function): void;
     (target: Object, propertyKey: string | symbol): void;
 };
-export declare type ValidationError = string | undefined | {
+export declare type ValidationError = I18NString | undefined | {
     [attr: string]: ValidationError;
 };
 export interface IValidator {
@@ -12,15 +14,15 @@ export interface IValidator {
 }
 export declare class RegexValidator implements IValidator {
     regex: RegExp;
-    errorMessage: string;
-    constructor(regex: RegExp, errorMessage?: string);
+    errorMessage: I18NString;
+    constructor(regex: RegExp, errorMessage?: I18NString);
     validate(obj: Object): ValidationError;
 }
 export declare class RangeValidator implements IValidator {
     min: number;
     max: number;
-    errorMessage: string;
-    constructor(min?: number, max?: number, errorMessage?: string);
+    errorMessage: I18NString;
+    constructor(min?: number, max?: number, errorMessage?: I18NString);
     validate(obj: Object): ValidationError;
 }
 export declare class ArrayValidator implements IValidator {
@@ -29,8 +31,8 @@ export declare class ArrayValidator implements IValidator {
     validate(obj: Object): ValidationError;
 }
 export declare class NestedValidator implements IValidator {
-    fields: string[];
-    constructor(...fields: string[]);
+    fields: ExtendFieldFilter;
+    constructor(fields: ExtendFieldFilter);
     validate(obj: Object): ValidationError;
 }
 export declare class ChainValidator implements IValidator {
@@ -40,12 +42,12 @@ export declare class ChainValidator implements IValidator {
 }
 export declare class PredicateValidator implements IValidator {
     predicate: (obj: Object) => any;
-    errorMessage: string;
-    constructor(predicate: (obj: Object) => any, errorMessage?: string);
+    errorMessage: I18NString;
+    constructor(predicate: (obj: Object) => any, errorMessage?: I18NString);
     validate(obj: Object): ValidationError;
 }
 export declare class NotEmptyValidator implements IValidator {
-    errorMessage: string;
-    constructor(errorMessage?: string);
+    errorMessage: I18NString;
+    constructor(errorMessage?: I18NString);
     validate(obj: Object): ValidationError;
 }

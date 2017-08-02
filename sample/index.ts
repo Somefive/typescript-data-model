@@ -2,6 +2,8 @@ import {Model} from '../src/model'
 import {validate, ValidationError, IValidator, NestedValidator, RangeValidator, 
     PredicateValidator, ArrayValidator, RegexValidator, ChainValidator, NotEmptyValidator} from '../src/validator'
 import {scenario, ScenarioFilter} from '../src/scenario'
+import { I18NString, I18N } from '../src/i18n'
+import { generateFieldFilter, ExtendFieldFilter} from '../src/field'
 
 /** You can create your own validator implements IValidator */
 class MyValidator implements IValidator {
@@ -40,7 +42,7 @@ class Name extends Model {
 }
 class User extends Model {
 
-    @validate(new NestedValidator("firstName", "lastName"))
+    @validate(new NestedValidator(["firstName", "lastName"]))
     name: Name
 
     @validate(new RangeValidator(1,100))
@@ -48,12 +50,19 @@ class User extends Model {
 
     static UserScenario: string = "user"
 
+    fieldNamesLangPack = {
+        password: {
+            en: "user password",
+            zh: "密码"
+        }
+    }
+
     @validate(new PredicateValidator(obj => (obj as string[]).length > 0, "At least one contact."),
                new ArrayValidator(new RegexValidator(/[0-9]{6,15}/)))
     @scenario(new ScenarioFilter(true, [], [User.UserScenario]))
     contact: string[]
 
-    @validate(new NotEmptyValidator())
+    @validate(new NotEmptyValidator({en: "Password cannot be empty.", zh: "密码不能为空"}))
     @scenario(new ScenarioFilter(false, [User.UserScenario]))
     password: string
 
@@ -81,7 +90,24 @@ console.log("Validation:\n", user.validate())
 console.log("Publish Doc:\n", user.toDocs())
 user.scenario = User.UserScenario
 /** contact is ignored and password is checked now */
-console.log("Validation after change scenario:\n", user.validate())
+console.log("Validation after change scenario:\n", I18N.t(user.validate(), "zh"))
 user.password = "userpass"
 /** now published doc does not have contact but has password */
 console.log("Doc after change scenario\n", user.toDocs())
+
+const i18NObject = {
+    name: "John Snow",
+    occupation: {
+        en: "Nights Watch",
+        zh: "守夜人"
+    }
+}
+/** Try I18N translation */
+console.log("I18N translation:", I18N.t(i18NObject, "zh"))
+
+/** Try generate filter by generateFieldFilter */
+const fieldsFilter = ["id", "profiles.id", "profiles.name", "!profiles.age"]
+console.log("FieldFilter generate:", generateFieldFilter(fieldsFilter))
+
+/** Try output field names */
+console.log(user.fieldNames(undefined, "zh"))

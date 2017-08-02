@@ -1,6 +1,9 @@
 import 'reflect-metadata'
-import { Model } from './model'
 import * as _ from 'lodash'
+import { Model } from './model'
+import { I18NString } from './i18n'
+import { ExtendFieldFilter } from './field'
+
 export const ValidateMetadataKey = Symbol("data-model:validator")
 export function validate(...validators: IValidator[]) {
     if (validators.length > 1)
@@ -8,16 +11,13 @@ export function validate(...validators: IValidator[]) {
     else
         return Reflect.metadata(ValidateMetadataKey, validators[0])
 }
-export type ValidationError = string|undefined|{[attr:string]:ValidationError}
+export type ValidationError = I18NString|undefined|{[attr:string]:ValidationError}
 export interface IValidator {
     validate(obj: Object): ValidationError
 }
 export class RegexValidator implements IValidator {
-    regex: RegExp
-    errorMessage: string
-    constructor(regex: RegExp, errorMessage: string = "Invalid Format") {
-        this.regex = regex
-        this.errorMessage = errorMessage
+    constructor(public regex: RegExp,
+                public errorMessage: I18NString = "Invalid Format") {
     }
     validate(obj: Object): ValidationError {
         if (typeof(obj) === "string")
@@ -27,13 +27,9 @@ export class RegexValidator implements IValidator {
     }
 }
 export class RangeValidator implements IValidator {
-    min: number
-    max: number
-    errorMessage: string
-    constructor(min: number = 0, max: number = 1, errorMessage: string = "Out of range") {
-        this.min = min
-        this.max = max
-        this.errorMessage = errorMessage
+    constructor(public min: number = 0,
+                public max: number = 1,
+                public errorMessage: I18NString = "Out of range") {
     }
     validate(obj: Object): ValidationError {
         if (typeof(obj) !== "number") return undefined
@@ -42,9 +38,7 @@ export class RangeValidator implements IValidator {
     }
 }
 export class ArrayValidator implements IValidator {
-    itemValidator: IValidator
-    constructor(itemValidator: IValidator) {
-        this.itemValidator = itemValidator
+    constructor(public itemValidator: IValidator) {
     }
     validate(obj: Object): ValidationError {
         const errors: any = {}
@@ -58,9 +52,7 @@ export class ArrayValidator implements IValidator {
     }
 }
 export class NestedValidator implements IValidator {
-    fields: string[]
-    constructor(...fields: string[]) {
-        this.fields = fields
+    constructor(public fields: ExtendFieldFilter) {
     }
     validate(obj: Object): ValidationError {
         const validateResult = (obj instanceof Model) ? obj.validate(this.fields) : undefined
@@ -82,11 +74,8 @@ export class ChainValidator implements IValidator {
     }
 }
 export class PredicateValidator implements IValidator {
-    predicate: (obj: Object) => any
-    errorMessage: string
-    constructor(predicate: (obj: Object) => any, errorMessage: string = "Not Valid") {
-        this.predicate = predicate
-        this.errorMessage = errorMessage
+    constructor(public predicate: (obj: Object) => any,
+                public errorMessage: I18NString = "Not Valid") {
     }
     validate(obj: Object): ValidationError {
         const result = this.predicate(obj)
@@ -97,9 +86,7 @@ export class PredicateValidator implements IValidator {
     }
 }
 export class NotEmptyValidator implements IValidator {
-    errorMessage: string
-    constructor(errorMessage: string = "Cannot be empty") {
-        this.errorMessage = errorMessage
+    constructor(public errorMessage: I18NString = "Cannot be empty") {
     }
     validate(obj: Object): ValidationError {
         return _.isEmpty(obj) ? this.errorMessage : undefined

@@ -30,6 +30,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var model_1 = require("../src/model");
 var validator_1 = require("../src/validator");
 var scenario_1 = require("../src/scenario");
+var i18n_1 = require("../src/i18n");
+var field_1 = require("../src/field");
 /** You can create your own validator implements IValidator */
 var MyValidator = (function () {
     function MyValidator(errorMessage) {
@@ -80,6 +82,12 @@ var User = (function (_super) {
         if (age === void 0) { age = 18; }
         if (contact === void 0) { contact = []; }
         var _this = _super.call(this) || this;
+        _this.fieldNamesLangPack = {
+            password: {
+                en: "user password",
+                zh: "密码"
+            }
+        };
         _this.name = name || new Name();
         _this.age = age;
         _this.contact = contact;
@@ -88,7 +96,7 @@ var User = (function (_super) {
     }
     User.UserScenario = "user";
     __decorate([
-        validator_1.validate(new validator_1.NestedValidator("firstName", "lastName")),
+        validator_1.validate(new validator_1.NestedValidator(["firstName", "lastName"])),
         __metadata("design:type", Name)
     ], User.prototype, "name", void 0);
     __decorate([
@@ -101,7 +109,7 @@ var User = (function (_super) {
         __metadata("design:type", Array)
     ], User.prototype, "contact", void 0);
     __decorate([
-        validator_1.validate(new validator_1.NotEmptyValidator()),
+        validator_1.validate(new validator_1.NotEmptyValidator({ en: "Password cannot be empty.", zh: "密码不能为空" })),
         scenario_1.scenario(new scenario_1.ScenarioFilter(false, [User.UserScenario])),
         __metadata("design:type", String)
     ], User.prototype, "password", void 0);
@@ -123,7 +131,21 @@ console.log("Validation:\n", user.validate());
 console.log("Publish Doc:\n", user.toDocs());
 user.scenario = User.UserScenario;
 /** contact is ignored and password is checked now */
-console.log("Validation after change scenario:\n", user.validate());
+console.log("Validation after change scenario:\n", i18n_1.I18N.t(user.validate(), "zh"));
 user.password = "userpass";
 /** now published doc does not have contact but has password */
 console.log("Doc after change scenario\n", user.toDocs());
+var i18NObject = {
+    name: "John Snow",
+    occupation: {
+        en: "Nights Watch",
+        zh: "守夜人"
+    }
+};
+/** Try I18N translation */
+console.log("I18N translation:", i18n_1.I18N.t(i18NObject, "zh"));
+/** Try generate filter by generateFieldFilter */
+var fieldsFilter = ["id", "profiles.id", "profiles.name", "!profiles.age"];
+console.log("FieldFilter generate:", field_1.generateFieldFilter(fieldsFilter));
+/** Try output field names */
+console.log(user.fieldNames(undefined, "zh"));

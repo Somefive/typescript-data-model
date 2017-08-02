@@ -2,6 +2,8 @@ import * as _ from 'lodash'
 import 'reflect-metadata'
 import {scenario, ScenarioFilter, ScenarioMetadataKey, Never, Always, ScenarioName} from './scenario'
 import {ValidateMetadataKey, IValidator, ValidationError} from './validator'
+import { I18NString, I18N } from './i18n'
+import { FieldFilter, ExtendFieldFilter, generateFieldFilter, getSubFieldFilter } from './field'
 
 export class Model {
 
@@ -14,6 +16,31 @@ export class Model {
     }
 
     static DefaultScenario = Symbol('default')
+
+    fields(fields?: string[]): string[] {
+        return fields || Object.getOwnPropertyNames(this)
+    }
+
+    fieldName(field: string, lang?: string): string {
+        return I18N.getString(this.fieldNamesLangPack[field] || field, lang) || field
+    }
+
+    fieldNames(fields?: string[], lang?: string): {[attr: string]: string} {
+        const fieldNames: {[attr: string]: string} = {}
+        this.fields(fields).forEach(field => {
+            if (this.isFieldAvailable(field))
+                fieldNames[field] = this.fieldName(field, lang)
+        })
+        return fieldNames
+    }
+
+    fieldFilters(fields?: ExtendFieldFilter): FieldFilter {
+        if (!fields) fields = this.fields()
+        return generateFieldFilter(fields)
+    }
+
+    @Never()
+    fieldNamesLangPack: {[field: string]: I18NString} = {}
 
     @Never()
     scenario: ScenarioName = Model.DefaultScenario
@@ -32,39 +59,38 @@ export class Model {
         return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultIncluded
     }
 
-    load(obj: Object, fields?: string[]) {
-        if (!fields)
-            fields = Object.getOwnPropertyNames(obj)
-        fields.forEach(field => {
+    load(obj: Object, fields?: ExtendFieldFilter) {
+        const fieldFilters = this.fieldFilters(fields)
+        Object.keys(obj).forEach(field => {
             const value = Reflect.get(obj, field)
-            if (!_.isNil(value) && this.isFieldAvailable(field)) {
+            if (fieldFilters[field] && this.isFieldAvailable(field) && !_.isNil(value)) {
                 const oldValue = Reflect.get(this, field)
                 if (oldValue instanceof Model)
-                    oldValue.load(value)
+                    oldValue.load(value, getSubFieldFilter(fieldFilters, field))
                 else
                     Reflect.set(this, field, value)
             }
         })
     }
 
-    toDocs(fields?: string[], force=false, ignoreNil=true): Object {
-        if (!fields)
-            fields = Object.getOwnPropertyNames(this)
+    toDocs(fields?: ExtendFieldFilter, force=false, ignoreNil=true): Object {
+        const fieldFilters = this.fieldFilters(fields)
         const docs: any = {}
-        fields.forEach(field => {
+        Object.keys(this).forEach(field => {
             const value = Reflect.get(this, field)
-            if ((!_.isNil(value) || !ignoreNil) && this.isFieldAvailable(field, !force))
-                Reflect.set(docs, field, (value instanceof Model) ? value.toDocs() : value)
+            if ((!_.isNil(value) || !ignoreNil) && this.isFieldAvailable(field, !force) && fieldFilters[field])
+                Reflect.set(docs, field,
+                    (value instanceof Model) ? value.toDocs(getSubFieldFilter(fieldFilters, field), force, ignoreNil) : value
+                )
         })
         return docs
     }
 
-    validate(fields?: string[], defaultValidator?: IValidator, force=false): ValidationError {
+    validate(fields?: ExtendFieldFilter, defaultValidator?: IValidator, force=false): ValidationError {
+        const fieldFilters = this.fieldFilters(fields)
         const errors: any = {}
-        if (!fields)
-            fields = Object.getOwnPropertyNames(this)
-        fields.forEach(field => {
-            if (this.isFieldAvailable(field, !force)) {
+        Object.keys(this).forEach(field => {
+            if (fieldFilters[field] && this.isFieldAvailable(field, !force)) {
                 const value = Reflect.get(this, field)
                 const validator = defaultValidator || Reflect.getMetadata(ValidateMetadataKey, this, field) as IValidator
                 if (validator) {
