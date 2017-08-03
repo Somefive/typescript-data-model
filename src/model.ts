@@ -49,7 +49,8 @@ export class Model {
     @Never()
     scenarioDefaultIncluded: boolean = true
     
-    constructor() {
+    constructor(obj?: Object) {
+        if(obj) this.load(obj)
     }
 
     isFieldAvailable(field: string, checkScenario=true): boolean {

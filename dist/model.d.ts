@@ -18,7 +18,7 @@ export declare class Model {
     };
     scenario: ScenarioName;
     scenarioDefaultIncluded: boolean;
-    constructor();
+    constructor(obj?: Object);
     isFieldAvailable(field: string, checkScenario?: boolean): boolean;
     load(obj: Object, fields?: ExtendFieldFilter): void;
     protected toDocValue(value: any, field: string, fieldFilters: FieldFilter, force?: boolean, ignoreNil?: boolean): any;

@@ -16,9 +16,11 @@ var validator_1 = require("./validator");
 var i18n_1 = require("./i18n");
 var field_1 = require("./field");
 var Model = (function () {
-    function Model() {
+    function Model(obj) {
         this.scenario = Model.DefaultScenario;
         this.scenarioDefaultIncluded = true;
+        if (obj)
+            this.load(obj);
     }
     Object.defineProperty(Model, "className", {
         get: function () {
