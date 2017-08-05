@@ -8,4 +8,5 @@ __export(require("./scenario"));
 __export(require("./validator"));
 __export(require("./i18n"));
 __export(require("./field"));
+__export(require("./loader"));
 //# sourceMappingURL=index.js.map

@@ -4,6 +4,7 @@ import {validate, ValidationError, IValidator, NestedValidator, RangeValidator,
 import {scenario, ScenarioFilter} from '../src/scenario'
 import { I18NString, I18N } from '../src/i18n'
 import { generateFieldFilter, ExtendFieldFilter} from '../src/field'
+import { loader } from '../src/loader'
 
 /** You can create your own validator implements IValidator */
 class MyValidator implements IValidator {
@@ -20,15 +21,16 @@ class MyValidator implements IValidator {
 class Name extends Model {
     
     @validate(new ChainValidator(new NotEmptyValidator(), new PredicateValidator(obj => (obj as string).length <= 15)))
-    firstName: string
+    firstName?: string
     
     @validate(new MyValidator())
-    lastName: string
+    lastName?: string
     
-    constructor(firstName: string="", lastName: string="") {
+    constructor(obj?: Object) {
         super()
-        this.firstName = firstName
-        this.lastName = lastName
+        this.firstName = undefined
+        this.lastName = undefined
+        if (obj) this.load(obj)
     }
 
     get fullName() {
@@ -43,10 +45,11 @@ class Name extends Model {
 class User extends Model {
 
     @validate(new NestedValidator(["firstName", "lastName"]))
-    name: Name
+    @loader(Name)
+    name?: Name
 
     @validate(new RangeValidator(1,100))
-    age: number
+    age?: number
 
     static UserScenario: string = "user"
 
@@ -66,14 +69,15 @@ class User extends Model {
 
     @validate(new NotEmptyValidator({en: "Password cannot be empty.", zh: "密码不能为空"}))
     @scenario(new ScenarioFilter(false, [User.UserScenario]))
-    password: string
+    password?: string
 
-    constructor(name: Name|null=null, age: number=18, contact: string[]=[]) {
+    constructor(obj?: Object) {
         super()
-        this.name = name || new Name()
-        this.age = age
-        this.contact = contact
-        this.password = ""
+        this.name = undefined
+        this.age = undefined
+        this.contact = []
+        this.password = undefined
+        if (obj) this.load(obj)
     }
 }
 const user = new User()
@@ -87,6 +91,8 @@ user.load({
 })
 /** this gives a brief overview of the user object */
 console.log("Full user:\n", user)
+/** User Name is a model */
+console.log("user.name is Model:", user.name instanceof Model)
 /** only contact['1'] validation failed */
 console.log("Validation:\n", user.validate())
 console.log("Publish Doc:\n", user.toDocs())

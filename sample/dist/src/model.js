@@ -15,6 +15,7 @@ var scenario_1 = require("./scenario");
 var validator_1 = require("./validator");
 var i18n_1 = require("./i18n");
 var field_1 = require("./field");
+var loader_1 = require("./loader");
 var Model = (function () {
     function Model(obj) {
         this.scenario = Model.DefaultScenario;
@@ -73,18 +74,7 @@ var Model = (function () {
         return scenarioFilter ? scenarioFilter.check(this.scenario) : this.scenarioDefaultIncluded;
     };
     Model.prototype.load = function (obj, fields) {
-        var _this = this;
-        var fieldFilters = this.fieldFilters(fields);
-        Object.keys(obj).forEach(function (field) {
-            var value = Reflect.get(obj, field);
-            if (fieldFilters[field] && _this.isFieldAvailable(field) && !_.isNil(value)) {
-                var oldValue = Reflect.get(_this, field);
-                if (oldValue instanceof Model)
-                    oldValue.load(value, field_1.getSubFieldFilter(fieldFilters, field));
-                else
-                    Reflect.set(_this, field, value);
-            }
-        });
+        loader_1.load(this, obj, fields);
     };
     Model.prototype.toDocValue = function (value, field, fieldFilters, force, ignoreNil) {
         var _this = this;

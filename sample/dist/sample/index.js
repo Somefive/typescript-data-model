@@ -32,6 +32,7 @@ var validator_1 = require("../src/validator");
 var scenario_1 = require("../src/scenario");
 var i18n_1 = require("../src/i18n");
 var field_1 = require("../src/field");
+var loader_1 = require("../src/loader");
 /** You can create your own validator implements IValidator */
 var MyValidator = (function () {
     function MyValidator(errorMessage) {
@@ -46,12 +47,12 @@ var MyValidator = (function () {
 /** A simple nested model. */
 var Name = (function (_super) {
     __extends(Name, _super);
-    function Name(firstName, lastName) {
-        if (firstName === void 0) { firstName = ""; }
-        if (lastName === void 0) { lastName = ""; }
+    function Name(obj) {
         var _this = _super.call(this) || this;
-        _this.firstName = firstName;
-        _this.lastName = lastName;
+        _this.firstName = undefined;
+        _this.lastName = undefined;
+        if (obj)
+            _this.load(obj);
         return _this;
     }
     Object.defineProperty(Name.prototype, "fullName", {
@@ -77,15 +78,14 @@ var Name = (function (_super) {
 }(model_1.Model));
 var User = (function (_super) {
     __extends(User, _super);
-    function User(name, age, contact) {
-        if (name === void 0) { name = null; }
-        if (age === void 0) { age = 18; }
-        if (contact === void 0) { contact = []; }
+    function User(obj) {
         var _this = _super.call(this) || this;
-        _this.name = name || new Name();
-        _this.age = age;
-        _this.contact = contact;
-        _this.password = "";
+        _this.name = undefined;
+        _this.age = undefined;
+        _this.contact = [];
+        _this.password = undefined;
+        if (obj)
+            _this.load(obj);
         return _this;
     }
     Object.defineProperty(User.prototype, "fieldNamesLangPack", {
@@ -103,6 +103,7 @@ var User = (function (_super) {
     User.UserScenario = "user";
     __decorate([
         validator_1.validate(new validator_1.NestedValidator(["firstName", "lastName"])),
+        loader_1.loader(Name),
         __metadata("design:type", Name)
     ], User.prototype, "name", void 0);
     __decorate([
@@ -132,6 +133,8 @@ user.load({
 });
 /** this gives a brief overview of the user object */
 console.log("Full user:\n", user);
+/** User Name is a model */
+console.log("user.name is Model:", user.name instanceof model_1.Model);
 /** only contact['1'] validation failed */
 console.log("Validation:\n", user.validate());
 console.log("Publish Doc:\n", user.toDocs());

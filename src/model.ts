@@ -4,6 +4,7 @@ import {scenario, ScenarioFilter, ScenarioMetadataKey, Never, Always, ScenarioNa
 import {ValidateMetadataKey, IValidator, ValidationError} from './validator'
 import { I18NString, I18N } from './i18n'
 import { FieldFilter, ExtendFieldFilter, generateFieldFilter, getSubFieldFilter } from './field'
+import { load } from './loader'
 
 export class Model {
 
@@ -62,17 +63,7 @@ export class Model {
     }
 
     load(obj: Object, fields?: ExtendFieldFilter) {
-        const fieldFilters = this.fieldFilters(fields)
-        Object.keys(obj).forEach(field => {
-            const value = Reflect.get(obj, field)
-            if (fieldFilters[field] && this.isFieldAvailable(field) && !_.isNil(value)) {
-                const oldValue = Reflect.get(this, field)
-                if (oldValue instanceof Model)
-                    oldValue.load(value, getSubFieldFilter(fieldFilters, field))
-                else
-                    Reflect.set(this, field, value)
-            }
-        })
+        load(this, obj, fields)
     }
 
     protected toDocValue(value: any, field: string, fieldFilters: FieldFilter, force=false, ignoreNil=true): any {
